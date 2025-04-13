@@ -58,7 +58,7 @@ That means that once we have our data, very little work is required to begin tra
 
 <Youtube id="AUozVp78dhk"/>
 
-As in the [previous chapter](/course/chapter2), we will use the `TFAutoModelForSequenceClassification` class, with two labels: 
+As in the previous chapter, we will use the `TFAutoModelForSequenceClassification` class, with two labels: 
 
 ```py
 from transformers import TFAutoModelForSequenceClassification
@@ -66,7 +66,7 @@ from transformers import TFAutoModelForSequenceClassification
 model = TFAutoModelForSequenceClassification.from_pretrained(checkpoint, num_labels=2)
 ```
 
-You will notice that unlike in [Chapter 2](/course/chapter2), you get a warning after instantiating this pretrained model. This is because BERT has not been pretrained on classifying pairs of sentences, so the head of the pretrained model has been discarded and a new head suitable for sequence classification has been inserted instead. The warnings indicate that some weights were not used (the ones corresponding to the dropped pretraining head) and that some others were randomly initialized (the ones for the new head). It concludes by encouraging you to train the model, which is exactly what we are going to do now.
+You will notice that unlike in Chapter 2, you get a warning after instantiating this pretrained model. This is because BERT has not been pretrained on classifying pairs of sentences, so the head of the pretrained model has been discarded and a new head suitable for sequence classification has been inserted instead. The warnings indicate that some weights were not used (the ones corresponding to the dropped pretraining head) and that some others were randomly initialized (the ones for the new head). It concludes by encouraging you to train the model, which is exactly what we are going to do now.
 
 To fine-tune the model on our dataset, we just have to `compile()` our model and then pass our data to the `fit()` method. This will start the fine-tuning process (which should take a couple of minutes on a GPU) and report training loss as it goes, plus the validation loss at the end of each epoch.
 
@@ -155,7 +155,7 @@ model.fit(tf_train_dataset, validation_data=tf_validation_dataset, epochs=3)
 
 <Tip>
 
-💡 If you want to automatically upload your model to the Hub during training, you can pass along a `PushToHubCallback` in the `model.fit()` method. We will learn more about this in [Chapter 4](/course/chapter4/3)
+💡 If you want to automatically upload your model to the Hub during training, you can pass along a `PushToHubCallback` in the `model.fit()` method. We will learn more about this in Chapter 4
 
 </Tip>
 
@@ -196,4 +196,4 @@ metric.compute(predictions=class_preds, references=raw_datasets["validation"]["l
 
 The exact results you get may vary, as the random initialization of the model head might change the metrics it achieved. Here, we can see our model has an accuracy of 85.78% on the validation set and an F1 score of 89.97. Those are the two metrics used to evaluate results on the MRPC dataset for the GLUE benchmark. The table in the [BERT paper](https://arxiv.org/pdf/1810.04805.pdf) reported an F1 score of 88.9 for the base model. That was the `uncased` model while we are currently using the `cased` model, which explains the better result.
 
-This concludes the introduction to fine-tuning using the Keras API. An example of doing this for most common NLP tasks will be given in [Chapter 7](/course/chapter7). If you would like to hone your skills on the Keras API, try to fine-tune a model on the GLUE SST-2 dataset, using the data processing you did in section 2.
+This concludes the introduction to fine-tuning using the Keras API. An example of doing this for most common NLP tasks will be given in Chapter 7. If you would like to hone your skills on the Keras API, try to fine-tune a model on the GLUE SST-2 dataset, using the data processing you did in section 2.
