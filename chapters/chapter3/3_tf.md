@@ -1,13 +1,5 @@
-<FrameworkSwitchCourse {fw} />
-
 # Fine-tuning a model with Keras
 
-<CourseFloatingBanner chapter={3}
-  classNames="absolute z-10 right-0 top-0"
-  notebooks={[
-    {label: "Google Colab", value: "https://colab.research.google.com/github/huggingface/notebooks/blob/master/course/en/chapter3/section3_tf.ipynb"},
-    {label: "Aws Studio", value: "https://studiolab.sagemaker.aws/import/github/huggingface/notebooks/blob/master/course/en/chapter3/section3_tf.ipynb"},
-]} />
 
 Once you've done all the data preprocessing work in the last section, you have just a few steps left to train the model. Note, however, that the `model.fit()` command will run very slowly on a CPU. If you don't have a GPU set up, you can get access to free GPUs or TPUs on [Google Colab](https://colab.research.google.com/).
 
@@ -52,11 +44,17 @@ tf_validation_dataset = tokenized_datasets["validation"].to_tf_dataset(
 
 TensorFlow models imported from 🤗 Transformers are already Keras models. Here is a short introduction to Keras.
 
-<Youtube id="rnTGBy2ax1c"/>
+<h3>Watch the Youtube video</h3>
+<a href="https://www.youtube.com/watch?v=00GKzGyWFEs" target="_blank">
+    <img src="https://img.youtube.com/vi/00GKzGyWFEs/0.jpg" alt="Watch on YouTube" style="width:100%;max-width:600px;">
+</a>
 
 That means that once we have our data, very little work is required to begin training on it.
 
-<Youtube id="AUozVp78dhk"/>
+<h3>Watch the Youtube video</h3>
+<a href="https://www.youtube.com/watch?v=00GKzGyWFEs" target="_blank">
+    <img src="https://img.youtube.com/vi/00GKzGyWFEs/0.jpg" alt="Watch on YouTube" style="width:100%;max-width:600px;">
+</a>
 
 As in the previous chapter, we will use the `TFAutoModelForSequenceClassification` class, with two labels: 
 
@@ -70,11 +68,11 @@ You will notice that unlike in Chapter 2, you get a warning after instantiating 
 
 To fine-tune the model on our dataset, we just have to `compile()` our model and then pass our data to the `fit()` method. This will start the fine-tuning process (which should take a couple of minutes on a GPU) and report training loss as it goes, plus the validation loss at the end of each epoch.
 
-<Tip>
+<div style="background-color: #FFF4E5; border-left: 4px solid #F97316; padding: 10px; color: black; max-width: 600px;">
 
 Note that 🤗 Transformers models have a special ability that most Keras models don't - they can automatically use an appropriate loss which they compute internally. They will use this loss by default if you don't set a loss argument in `compile()`. Note that to use the internal loss you'll need to pass your labels as part of the input, not as a separate label, which is the normal way to use labels with Keras models. You'll see examples of this in Part 2 of the course, where defining the correct loss function can be tricky. For sequence classification, however, a standard Keras loss function works fine, so that's what we'll use here.
 
-</Tip>
+</div>
 
 ```py
 from tensorflow.keras.losses import SparseCategoricalCrossentropy
@@ -94,12 +92,15 @@ model.fit(
 
 Note a very common pitfall here — you *can* just pass the name of the loss as a string to Keras, but by default Keras will assume that you have already applied a softmax to your outputs. Many models, however, output the values right before the softmax is applied, which are also known as the *logits*. We need to tell the loss function that that's what our model does, and the only way to do that is to call it directly, rather than by name with a string.
 
-</Tip>
+</div>
 
 
 ### Improving training performance
 
-<Youtube id="cpzq6ESSM5c"/>
+<h3>Watch the Youtube video</h3>
+<a href="https://www.youtube.com/watch?v=00GKzGyWFEs" target="_blank">
+    <img src="https://img.youtube.com/vi/00GKzGyWFEs/0.jpg" alt="Watch on YouTube" style="width:100%;max-width:600px;">
+</a>
 
 If you try the above code, it certainly runs, but you'll find that the loss declines only slowly or sporadically. The primary cause
 is the *learning rate*. As with the loss, when we pass Keras the name of an optimizer as a string, Keras initializes
@@ -131,11 +132,11 @@ from tensorflow.keras.optimizers import Adam
 opt = Adam(learning_rate=lr_scheduler)
 ```
 
-<Tip>
+<div style="background-color: #FFF4E5; border-left: 4px solid #F97316; padding: 10px; color: black; max-width: 600px;">
 
 The 🤗 Transformers library also has a `create_optimizer()` function that will create an `AdamW` optimizer with learning rate decay. This is a convenient shortcut that you'll see in detail in future sections of the course.
 
-</Tip>
+</div>
 
 Now we have our all-new optimizer, and we can try training with it. First, let's reload the model, to reset the changes to the weights from the training run we just did, and then we can compile it with the new optimizer:
 
@@ -153,15 +154,18 @@ Now, we fit again:
 model.fit(tf_train_dataset, validation_data=tf_validation_dataset, epochs=3)
 ```
 
-<Tip>
+<div style="background-color: #FFF4E5; border-left: 4px solid #F97316; padding: 10px; color: black; max-width: 600px;">
 
 💡 If you want to automatically upload your model to the Hub during training, you can pass along a `PushToHubCallback` in the `model.fit()` method. We will learn more about this in Chapter 4
 
-</Tip>
+</div>
 
 ### Model predictions
 
-<Youtube id="nx10eh4CoOs"/>
+<h3>Watch the Youtube video</h3>
+<a href="https://www.youtube.com/watch?v=00GKzGyWFEs" target="_blank">
+    <img src="https://img.youtube.com/vi/00GKzGyWFEs/0.jpg" alt="Watch on YouTube" style="width:100%;max-width:600px;">
+</a>
 
 
 Training and watching the loss go down is all very nice, but what if we want to actually get outputs from the trained model, either to compute some metrics, or to use the model in production? To do that, we can just use the `predict()` method. This will return the *logits* from the output head of the model, one per class.
@@ -197,3 +201,8 @@ metric.compute(predictions=class_preds, references=raw_datasets["validation"]["l
 The exact results you get may vary, as the random initialization of the model head might change the metrics it achieved. Here, we can see our model has an accuracy of 85.78% on the validation set and an F1 score of 89.97. Those are the two metrics used to evaluate results on the MRPC dataset for the GLUE benchmark. The table in the [BERT paper](https://arxiv.org/pdf/1810.04805.pdf) reported an F1 score of 88.9 for the base model. That was the `uncased` model while we are currently using the `cased` model, which explains the better result.
 
 This concludes the introduction to fine-tuning using the Keras API. An example of doing this for most common NLP tasks will be given in Chapter 7. If you would like to hone your skills on the Keras API, try to fine-tune a model on the GLUE SST-2 dataset, using the data processing you did in section 2.
+
+# Practice Time: Run the Code
+
+[Google Colab](https://colab.research.google.com/github/huggingface/notebooks/blob/master/course/en/chapter3/section3_tf.ipynb)
+[Aws Studio](https://studiolab.sagemaker.aws/import/github/huggingface/notebooks/blob/master/course/en/chapter3/section3_tf.ipynb)
