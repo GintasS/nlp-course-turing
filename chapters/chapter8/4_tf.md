@@ -1,19 +1,15 @@
-<FrameworkSwitchCourse {fw} />
-
 # Debugging the training pipeline
 
-<CourseFloatingBanner chapter={8}
-  classNames="absolute z-10 right-0 top-0"
-  notebooks={[
-    {label: "Google Colab", value: "https://colab.research.google.com/github/huggingface/notebooks/blob/master/course/en/chapter8/section4_tf.ipynb"},
-    {label: "Aws Studio", value: "https://studiolab.sagemaker.aws/import/github/huggingface/notebooks/blob/master/course/en/chapter8/section4_tf.ipynb"},
-]} />
+
 
 You've written a beautiful script to train or fine-tune a model on a given task, dutifully following the advice from Chapter 7. But when you launch the command `model.fit()`, something horrible happens: you get an error 😱! Or worse, everything seems to be fine and the training runs without error, but the resulting model is crappy. In this section, we will show you what you can do to debug these kinds of issues.
 
 ## Debugging the training pipeline
 
-<Youtube id="N9kO52itd0Q"/>
+<h3>Watch the Youtube video</h3>
+<a href="https://www.youtube.com/watch?v=00GKzGyWFEs" target="_blank">
+    <img src="https://img.youtube.com/vi/00GKzGyWFEs/0.jpg" alt="Watch on YouTube" style="width:100%;max-width:600px;">
+</a>
 
 The problem when you encounter an error in `model.fit()` is that it could come from multiple sources, as training usually brings together a lot of things that you've been working on up until that point. The problem could be something wrong in your dataset, or some issue when trying to batch elements of the datasets together. Or it could be something wrong in the model code, or your loss function or optimizer. And even if everything goes well for training, something could still go wrong during the evaluation if there is a problem with your metric.
 
@@ -111,7 +107,7 @@ model.compile(optimizer="adam")
 
 Now we'll use the model's internal loss, and this problem should be resolved!
 
-<Tip>
+<div style="background-color: #FFF4E5; border-left: 4px solid #F97316; padding: 10px; color: black; max-width: 600px;">
 
 ✏️ **Your turn!** As an optional challenge after we've resolved the other issues, you can try coming back to this step and getting the model to work with the original Keras-computed loss instead of the internal loss. You'll need to add `"labels"` to the `label_cols` argument of `to_tf_dataset()` to ensure that the labels are correctly outputted, which will get you gradients -- but there's one more problem with the loss that we specified. Training will still run with this problem, but learning will be very slow and will plateau at a high training loss. Can you figure out what it is?
 
@@ -119,7 +115,7 @@ A ROT13-encoded hint, if you're stuck: Vs lbh ybbx ng gur bhgchgf bs FrdhraprPyn
 
 And a second hint: Jura lbh fcrpvsl bcgvzvmref, npgvingvbaf be ybffrf jvgu fgevatf, Xrenf frgf nyy gur nethzrag inyhrf gb gurve qrsnhygf. Jung nethzragf qbrf FcnefrPngrtbevpnyPebffragebcl unir, naq jung ner gurve qrsnhygf?
 
-</Tip>
+</div>
 
 Now, let's try training. We should get gradients now, so hopefully (ominous music plays here) we can just call `model.fit()` and everything will work fine!
 
@@ -362,11 +358,11 @@ model = TFAutoModelForSequenceClassification.from_pretrained(model_checkpoint)
 model.compile(optimizer=Adam(5e-5))
 ```
 
-<Tip>
+<div style="background-color: #FFF4E5; border-left: 4px solid #F97316; padding: 10px; color: black; max-width: 600px;">
 
 💡 You can also import the `create_optimizer()` function from 🤗 Transformers, which will give you an AdamW optimizer with correct weight decay as well as learning rate warmup and decay. This optimizer will often produce slightly better results than the ones you get with the default Adam optimizer.
 
-</Tip>
+</div>
 
 Now, we can try fitting the model with the new, improved learning rate:
 
@@ -388,11 +384,11 @@ We've covered the issues in the script above, but there are several other common
 
 The telltale sign of running out of memory is an error like "OOM when allocating tensor" -- OOM is short for "out of memory." This is a very common hazard when dealing with large language models. If you encounter this, a good strategy is to halve your batch size and try again. Bear in mind, though, that some models are *very* large. For example, the full-size GPT-2 has 1.5B parameters, which means you'll need 6 GB of memory just to store the model, and another 6 GB for its gradients! Training the full GPT-2 model will usually require over 20 GB of VRAM no matter what batch size you use, which only a few GPUs have. More lightweight models like `distilbert-base-cased` are much easier to run, and train much more quickly too.
 
-<Tip>
+<div style="background-color: #FFF4E5; border-left: 4px solid #F97316; padding: 10px; color: black; max-width: 600px;">
 
 In the next part of the course, we'll look at more advanced techniques that can help you reduce your memory footprint and let you fine-tune the biggest models.
 
-</Tip>
+</div>
 
 ### Hungry Hungry TensorFlow 🦛
 
@@ -448,11 +444,11 @@ for batch in train_dataset:
 model.fit(batch, epochs=20)
 ```
 
-<Tip>
+<div style="background-color: #FFF4E5; border-left: 4px solid #F97316; padding: 10px; color: black; max-width: 600px;">
 
 💡 If your training data is unbalanced, make sure to build a batch of training data containing all the labels.
 
-</Tip>
+</div>
 
 The resulting model should have close-to-perfect results on the `batch`, with a loss declining quickly toward 0 (or the minimum value for the loss you're using).
 
@@ -462,7 +458,7 @@ If you don't manage to have your model obtain perfect results like this, it mean
 
 ⚠️ You will have to recreate your model and recompile after this overfitting test, as the model obtained probably won't be able to recover and learn something useful on your full dataset.
 
-</Tip>
+</div>
 
 ### Don't tune anything until you have a first baseline
 
@@ -484,3 +480,8 @@ Here are some additional resources that may prove helpful:
 - ["A Recipe for Training Neural Networks"](http://karpathy.github.io/2019/04/25/recipe/) by Andrej Karpathy
 
 Of course, not every problem you encounter when training neural nets is your own fault! If you encounter something in the 🤗 Transformers or 🤗 Datasets library that does not seem right, you may have encountered a bug. You should definitely tell us all about it, and in the next section we'll explain exactly how to do that.
+
+# Practice Time: Run the Code
+
+- [Google Colab](https://colab.research.google.com/github/huggingface/notebooks/blob/master/course/en/chapter8/section4_tf.ipynb)
+- [AWS Studio](https://studiolab.sagemaker.aws/import/github/huggingface/notebooks/blob/master/course/en/chapter8/section4_tf.ipynb)
